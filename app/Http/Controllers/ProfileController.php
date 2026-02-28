@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -18,6 +21,26 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        dd(DB::connection()->getDatabaseName());
+
+        /*$tenant = Tenant::create([
+            'id' => 'cliente2',
+        ]);
+
+        $tenant->domains()->create([
+            'domain' => 'cliente2.localhost',
+        ]);*/
+
+        $tenant = Tenant::find('cliente2');
+
+        $tenant->run(function () {
+            User::create([
+                'name' => 'Admin',
+                'email' => 'admin@cliente2.com',
+                'password' => bcrypt('123456'),
+            ]);
+        });
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),

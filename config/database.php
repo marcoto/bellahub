@@ -63,6 +63,14 @@ return [
             ]) : [],
         ],
 
+        'tenant' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST'),
+            'database' => null, // Stancl lo cambia dinámicamente
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
