@@ -34,6 +34,16 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'tenant' => function () {
+                if (!function_exists('tenancy') || !tenancy()->initialized) {
+                    return null;
+                }
+                $logo = tenant('logo');
+                return [
+                    'name' => tenant('name'),
+                    'logo' => $logo ? asset('storage/' . $logo) : null,
+                ];
+            },
         ];
     }
 }

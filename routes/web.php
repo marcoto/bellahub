@@ -14,5 +14,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('system/dashboard', [SystemController::class, 'dashboard'])->name('system.dashboard');
+    Route::post('system/tenants', [SystemController::class, 'storeTenant'])->name('system.tenants.store');
     Route::post('system/logout', [SystemController::class, 'logout'])->name('system.logout');
 });

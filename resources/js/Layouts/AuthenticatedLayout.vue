@@ -23,7 +23,14 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
+                                    <img
+                                        v-if="$page.props.tenant?.logo"
+                                        :src="$page.props.tenant.logo"
+                                        class="block h-9 w-auto object-contain"
+                                        :alt="$page.props.tenant.name ?? 'Logo'"
+                                    />
                                     <ApplicationLogo
+                                        v-else
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
                                 </Link>
