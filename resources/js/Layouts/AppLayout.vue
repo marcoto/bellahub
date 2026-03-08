@@ -80,6 +80,7 @@ watchEffect(() => {
 const collapsed = ref(Boolean(page.props.sidebar_collapsed))
 
 function toggleSidebar() {
+    tooltip.value.visible = false
     collapsed.value = !collapsed.value
     router.post('/sidebar/toggle', { collapsed: collapsed.value }, {
         preserveState: true,
@@ -113,6 +114,18 @@ const navSections = computed(() => [
         ],
     },
 ])
+
+const tooltip = ref({ visible: false, name: '', top: 0 })
+
+function showTooltip(event, name) {
+    if (!collapsed.value) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    tooltip.value = { visible: true, name, top: rect.top + rect.height / 2 }
+}
+
+function hideTooltip() {
+    tooltip.value.visible = false
+}
 
 function isActive(routeName) {
     if (routeName === 'dashboard') return page.url === '/dashboard'
@@ -204,7 +217,8 @@ function isActive(routeName) {
                             v-for="item in section.items"
                             :key="item.name"
                             :href="route(item.route)"
-                            :title="collapsed ? item.name : ''"
+                            @mouseenter="showTooltip($event, item.name)"
+                            @mouseleave="hideTooltip"
                             class="group relative w-full flex items-center rounded-lg py-2.5 px-3 transition-colors duration-150"
                             :class="[
                                 collapsed ? 'justify-center' : 'gap-2.5',
@@ -344,4 +358,32 @@ function isActive(routeName) {
             </main>
         </div>
     </div>
+
+    <!-- Nav tooltip (fixed, escapes any overflow context) -->
+    <Teleport to="body">
+        <Transition name="nav-tooltip">
+            <div
+                v-if="tooltip.visible"
+                class="fixed z-[200] pointer-events-none flex items-center"
+                :style="{ top: tooltip.top + 'px', left: '72px', transform: 'translateY(-50%)' }"
+            >
+                <span class="border-[5px] border-transparent border-r-gray-800" />
+                <span class="px-2.5 py-1.5 rounded-lg bg-gray-800 text-white text-sm font-medium whitespace-nowrap shadow-lg">
+                    {{ tooltip.name }}
+                </span>
+            </div>
+        </Transition>
+    </Teleport>
 </template>
+
+<style scoped>
+.nav-tooltip-enter-active,
+.nav-tooltip-leave-active {
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.nav-tooltip-enter-from,
+.nav-tooltip-leave-to {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-4px);
+}
+</style>

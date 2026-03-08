@@ -254,7 +254,7 @@ function initials(name) {
                             <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Duración</th>
                             <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Precio</th>
                             <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</th>
-                            <th class="px-5 py-3"></th>
+                            <th class="w-px px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
