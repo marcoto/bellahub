@@ -35,7 +35,7 @@ const props = defineProps({
                 No hay trabajadores activos.
             </div>
 
-            <div v-else class="grid grid-cols-2 gap-5">
+            <div v-else class="grid grid-cols-2 xl:grid-cols-3 gap-5">
                 <div
                     v-for="worker in workers"
                     :key="worker.id"

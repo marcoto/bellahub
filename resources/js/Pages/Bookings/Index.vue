@@ -2,6 +2,8 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import Select from 'primevue/select'
+import DatePicker from 'primevue/datepicker'
 
 const page = usePage()
 const tenant = computed(() => page.props.tenant)
@@ -13,22 +15,30 @@ const props = defineProps({
 })
 
 // Filters
-const filterDate     = ref(props.filters?.date ?? '')
-const filterWorker   = ref(props.filters?.worker_id ?? '')
-const filterStatus   = ref(props.filters?.status ?? '')
+const filterDateObj  = ref(props.filters?.date ? new Date(props.filters.date + 'T00:00:00') : null)
+const filterWorker   = ref(props.filters?.worker_id ? Number(props.filters.worker_id) : null)
+const filterStatus   = ref(props.filters?.status ?? null)
+
+const statusOptions = [
+    { label: 'Todos los estados', value: null },
+    { label: 'Pendiente',  value: 'pending' },
+    { label: 'Confirmada', value: 'confirmed' },
+    { label: 'Cancelada',  value: 'cancelled' },
+    { label: 'Completada', value: 'completed' },
+]
 
 function applyFilters() {
     router.get(route('bookings.index'), {
-        date:      filterDate.value || undefined,
+        date:      filterDateObj.value ? filterDateObj.value.toISOString().slice(0, 10) : undefined,
         worker_id: filterWorker.value || undefined,
         status:    filterStatus.value || undefined,
     }, { preserveState: true, replace: true })
 }
 
 function clearFilters() {
-    filterDate.value = ''
-    filterWorker.value = ''
-    filterStatus.value = ''
+    filterDateObj.value = null
+    filterWorker.value  = null
+    filterStatus.value  = null
     router.get(route('bookings.index'))
 }
 
@@ -47,6 +57,18 @@ const form = useForm({
     status:       'confirmed',
     notes:        '',
 })
+
+const formDateObj = computed({
+    get: () => form.date ? new Date(form.date + 'T00:00:00') : null,
+    set: (val) => { form.date = val ? val.toISOString().slice(0, 10) : '' },
+})
+
+const formStatusOptions = [
+    { label: 'Pendiente',  value: 'pending' },
+    { label: 'Confirmada', value: 'confirmed' },
+    { label: 'Cancelada',  value: 'cancelled' },
+    { label: 'Completada', value: 'completed' },
+]
 
 function openCreate() {
     editingBooking.value = null
@@ -124,28 +146,31 @@ const statusColors = {
 
             <!-- Filters -->
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-5 flex items-center gap-3 flex-wrap">
-                <input
-                    v-model="filterDate"
-                    type="date"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
+                <DatePicker
+                    v-model="filterDateObj"
+                    dateFormat="dd/mm/yy"
+                    placeholder="Fecha"
+                    showClear
+                    class="h-[42px]"
                 />
-                <select
+                <Select
                     v-model="filterWorker"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                    <option value="">Todos los trabajadores</option>
-                    <option v-for="w in workers" :key="w.id" :value="w.id">{{ w.name }}</option>
-                </select>
-                <select
+                    :options="workers"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Todos los trabajadores"
+                    showClear
+                    class="min-w-[180px]"
+                />
+                <Select
                     v-model="filterStatus"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                    <option value="">Todos los estados</option>
-                    <option value="pending">Pendiente</option>
-                    <option value="confirmed">Confirmada</option>
-                    <option value="cancelled">Cancelada</option>
-                    <option value="completed">Completada</option>
-                </select>
+                    :options="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Todos los estados"
+                    showClear
+                    class="min-w-[160px]"
+                />
                 <button @click="applyFilters" class="px-4 py-2 rounded-lg text-white text-sm font-medium" :style="{ backgroundColor: tenant?.primary_color || '#8b5cf6' }">
                     Filtrar
                 </button>
@@ -252,8 +277,14 @@ const statusColors = {
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha *</label>
-                                <input v-model="form.date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                <DatePicker
+                                    v-model="formDateObj"
+                                    dateFormat="dd/mm/yy"
+                                    showClear
+                                    class="w-full"
+                                    inputClass="w-full border border-gray-200 rounded-lg px-3 py-2 text-base"
+                                />
+                                <p v-if="form.errors.date" class="text-xs text-red-500 mt-1">{{ form.errors.date }}</p>
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Hora inicio *</label>
@@ -267,11 +298,15 @@ const statusColors = {
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Trabajador</label>
-                                <select v-model="form.worker_id"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
-                                    <option value="">Sin asignar</option>
-                                    <option v-for="w in workers" :key="w.id" :value="w.id">{{ w.name }}</option>
-                                </select>
+                                <Select
+                                    v-model="form.worker_id"
+                                    :options="workers"
+                                    optionLabel="name"
+                                    optionValue="id"
+                                    placeholder="Sin asignar"
+                                    showClear
+                                    class="w-full"
+                                />
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Servicio</label>
@@ -280,13 +315,13 @@ const statusColors = {
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Estado</label>
-                                <select v-model="form.status"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
-                                    <option value="pending">Pendiente</option>
-                                    <option value="confirmed">Confirmada</option>
-                                    <option value="cancelled">Cancelada</option>
-                                    <option value="completed">Completada</option>
-                                </select>
+                                <Select
+                                    v-model="form.status"
+                                    :options="formStatusOptions"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    class="w-full"
+                                />
                             </div>
                             <div class="col-span-2">
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Notas</label>

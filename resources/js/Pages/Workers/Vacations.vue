@@ -2,6 +2,7 @@
 import { Head, router, useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import DatePicker from 'primevue/datepicker'
 
 const page = usePage()
 const tenant = computed(() => page.props.tenant)
@@ -20,6 +21,16 @@ const form = useForm({
     from_date: '',
     to_date:   '',
     notes:     '',
+})
+
+const fromDateObj = computed({
+    get: () => form.from_date ? new Date(form.from_date + 'T00:00:00') : null,
+    set: (val) => { form.from_date = val ? val.toISOString().slice(0, 10) : '' },
+})
+
+const toDateObj = computed({
+    get: () => form.to_date ? new Date(form.to_date + 'T00:00:00') : null,
+    set: (val) => { form.to_date = val ? val.toISOString().slice(0, 10) : '' },
 })
 
 function submit() {
@@ -182,14 +193,22 @@ const usedPercent = computed(() => Math.min(100, (props.usedDays / props.totalDa
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha inicio *</label>
-                                <input v-model="form.from_date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                <DatePicker
+                                    v-model="fromDateObj"
+                                    dateFormat="dd/mm/yy"
+                                    showClear
+                                    class="w-full"
+                                />
                                 <p v-if="form.errors.from_date" class="text-xs text-red-500 mt-1">{{ form.errors.from_date }}</p>
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha fin *</label>
-                                <input v-model="form.to_date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                <DatePicker
+                                    v-model="toDateObj"
+                                    dateFormat="dd/mm/yy"
+                                    showClear
+                                    class="w-full"
+                                />
                                 <p v-if="form.errors.to_date" class="text-xs text-red-500 mt-1">{{ form.errors.to_date }}</p>
                             </div>
                         </div>

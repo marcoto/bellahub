@@ -1,7 +1,14 @@
 <script setup>
 import { Head, router, useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+
+const roleOptions = [
+    { label: 'Trabajador', value: 'worker' },
+    { label: 'Admin',      value: 'admin' },
+]
 import AppLayout from '@/Layouts/AppLayout.vue'
+import Select from 'primevue/select'
+import DatePicker from 'primevue/datepicker'
 
 const page = usePage()
 const tenant = computed(() => page.props.tenant)
@@ -23,6 +30,11 @@ const form = useForm({
     hire_date:     '',
     vacation_days: 22,
     is_active:     true,
+})
+
+const hireDateObj = computed({
+    get: () => form.hire_date ? new Date(form.hire_date + 'T00:00:00') : null,
+    set: (val) => { form.hire_date = val ? val.toISOString().slice(0, 10) : '' },
 })
 
 function openCreate() {
@@ -199,11 +211,13 @@ function deleteUser(id) {
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Rol *</label>
-                                <select v-model="form.role"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
-                                    <option value="worker">Trabajador</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <Select
+                                    v-model="form.role"
+                                    :options="roleOptions"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    class="w-full"
+                                />
                             </div>
                         </div>
 
@@ -242,8 +256,12 @@ function deleteUser(id) {
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha de contratación</label>
-                                <input v-model="form.hire_date" type="date"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                <DatePicker
+                                    v-model="hireDateObj"
+                                    dateFormat="dd/mm/yy"
+                                    showClear
+                                    class="w-full"
+                                />
                             </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Días de vacaciones / Año</label>
