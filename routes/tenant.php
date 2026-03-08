@@ -9,6 +9,8 @@ use App\Http\Controllers\Tenant\SidebarController;
 use App\Http\Controllers\Tenant\TimeRecordController;
 use App\Http\Controllers\Tenant\UserController;
 use App\Http\Controllers\Tenant\VacationController;
+use App\Http\Controllers\Tenant\ServiceCategoryController;
+use App\Http\Controllers\Tenant\ServiceController;
 use App\Http\Controllers\Tenant\WorkerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,6 +60,17 @@ Route::middleware([
         Route::post('/workers/vacations/{vacationRequest}/approve', [VacationController::class, 'approve'])->name('workers.vacations.approve');
         Route::post('/workers/vacations/{vacationRequest}/reject', [VacationController::class, 'reject'])->name('workers.vacations.reject');
         Route::delete('/workers/vacations/{vacationRequest}', [VacationController::class, 'destroy'])->name('workers.vacations.destroy');
+
+        // Services (Servicios) — admin only
+        Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+        Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+        Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+        Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+        // Service Categories — admin only
+        Route::post('/service-categories', [ServiceCategoryController::class, 'store'])->name('service-categories.store');
+        Route::put('/service-categories/{serviceCategory}', [ServiceCategoryController::class, 'update'])->name('service-categories.update');
+        Route::delete('/service-categories/{serviceCategory}', [ServiceCategoryController::class, 'destroy'])->name('service-categories.destroy');
 
         // Sidebar state
         Route::post('/sidebar/toggle', [SidebarController::class, 'toggle'])->name('sidebar.toggle');

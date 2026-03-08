@@ -87,7 +87,9 @@ function toggleSidebar() {
     })
 }
 
-const navSections = [
+const isAdmin = computed(() => user.value?.role === 'admin')
+
+const navSections = computed(() => [
     {
         label: 'General',
         items: [
@@ -95,13 +97,14 @@ const navSections = [
             { name: 'Reservas', route: 'bookings.index', icon: 'calendar' },
         ],
     },
-    {
+    ...(isAdmin.value ? [{
         label: 'Administración',
         items: [
             { name: 'Usuarios', route: 'users.index', icon: 'users' },
             { name: 'Trabajadores', route: 'workers.index', icon: 'team' },
+            { name: 'Servicios', route: 'services.index', icon: 'services' },
         ],
-    },
+    }] : []),
     {
         label: 'Mi zona',
         items: [
@@ -109,7 +112,7 @@ const navSections = [
             { name: 'Vacaciones', route: 'workers.vacations', icon: 'vacation' },
         ],
     },
-]
+])
 
 function isActive(routeName) {
     if (routeName === 'dashboard') return page.url === '/dashboard'
@@ -118,6 +121,7 @@ function isActive(routeName) {
     if (routeName === 'workers.index') return page.url === '/workers'
     if (routeName === 'workers.time') return page.url.startsWith('/workers/time')
     if (routeName === 'workers.vacations') return page.url.startsWith('/workers/vacations')
+    if (routeName === 'services.index') return page.url.startsWith('/services')
     return false
 }
 </script>
@@ -232,6 +236,10 @@ function isActive(routeName) {
                             <!-- Vacation -->
                             <svg v-if="item.icon === 'vacation'" class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                            </svg>
+                            <!-- Services -->
+                            <svg v-if="item.icon === 'services'" class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                             </svg>
 
                             <!-- Item label -->
