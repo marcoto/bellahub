@@ -1,11 +1,81 @@
 <script setup>
 import { Link, router, usePage } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)
 const tenant = computed(() => page.props.tenant)
 const primaryColor = computed(() => tenant.value?.primary_color || '#8b5cf6')
+
+function hexToHsl(hex) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255
+    const g = parseInt(hex.slice(3, 5), 16) / 255
+    const b = parseInt(hex.slice(5, 7), 16) / 255
+    const max = Math.max(r, g, b), min = Math.min(r, g, b)
+    let h = 0, s = 0, l = (max + min) / 2
+    if (max !== min) {
+        const d = max - min
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+        switch (max) {
+            case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break
+            case g: h = ((b - r) / d + 2) / 6; break
+            case b: h = ((r - g) / d + 4) / 6; break
+        }
+    }
+    return [h * 360, s * 100, l * 100]
+}
+
+function hslToHex(h, s, l) {
+    h /= 360; s /= 100; l /= 100
+    const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1
+        if (t > 1) t -= 1
+        if (t < 1 / 6) return p + (q - p) * 6 * t
+        if (t < 1 / 2) return q
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+        return p
+    }
+    let r, g, b
+    if (s === 0) {
+        r = g = b = l
+    } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+        const p = 2 * l - q
+        r = hue2rgb(p, q, h + 1 / 3)
+        g = hue2rgb(p, q, h)
+        b = hue2rgb(p, q, h - 1 / 3)
+    }
+    const toHex = x => Math.round(x * 255).toString(16).padStart(2, '0')
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+}
+
+function generatePalette(hex) {
+    const [h, s, l] = hexToHsl(hex)
+    const shades = { 50: 97, 100: 93, 200: 86, 300: 74, 400: 62, 500: l, 600: l - 10, 700: l - 18, 800: l - 26, 900: l - 33, 950: l - 38 }
+    const result = {}
+    for (const [shade, lightness] of Object.entries(shades)) {
+        result[shade] = hslToHex(h, s, Math.max(2, Math.min(97, lightness)))
+    }
+    return result
+}
+
+watchEffect(() => {
+    const palette = generatePalette(primaryColor.value)
+    const root = document.documentElement
+    for (const [shade, hex] of Object.entries(palette)) {
+        root.style.setProperty(`--p-primary-${shade}`, hex)
+    }
+    root.style.setProperty('--p-primary-color', palette[500])
+    root.style.setProperty('--p-primary-contrast-color', '#ffffff')
+    root.style.setProperty('--p-primary-hover-color', palette[600])
+    root.style.setProperty('--p-primary-active-color', palette[700])
+    root.style.setProperty('--p-focus-ring-color', palette[500])
+    // Highlight tokens (used for selected option in dropdowns)
+    root.style.setProperty('--p-highlight-background', palette[50])
+    root.style.setProperty('--p-highlight-focus-background', palette[100])
+    root.style.setProperty('--p-highlight-color', palette[700])
+    root.style.setProperty('--p-highlight-focus-color', palette[800])
+})
 
 const collapsed = ref(Boolean(page.props.sidebar_collapsed))
 
