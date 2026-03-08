@@ -75,7 +75,7 @@ function deleteUser(id) {
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">Usuarios</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Usuarios</h1>
                     <p class="text-sm text-gray-400 mt-0.5">Administra el equipo de la peluquería</p>
                 </div>
                 <button
@@ -162,8 +162,9 @@ function deleteUser(id) {
 
         <!-- Edit Modal -->
         <Teleport to="body">
-            <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-screen overflow-y-auto">
+            <Transition name="modal">
+            <div v-if="showModal" class="fixed inset-0 bg-black/25 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="modal-panel bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
                     <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
                         <div v-if="editingUser"
                              class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
@@ -171,8 +172,8 @@ function deleteUser(id) {
                             {{ editingUser.name?.slice(0,2)?.toUpperCase() }}
                         </div>
                         <div>
-                            <h2 class="text-base font-semibold text-gray-800">{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
-                            <p v-if="editingUser" class="text-xs text-gray-400">{{ editingUser.name }}</p>
+                            <h2 class="text-2xl font-bold text-gray-800">{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+                            <p v-if="editingUser" class="text-sm text-gray-400">{{ editingUser.name }}</p>
                         </div>
                         <button @click="showModal = false" class="ml-auto text-gray-400 hover:text-gray-600">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,23 +184,23 @@ function deleteUser(id) {
 
                     <form @submit.prevent="submitForm" class="p-6 space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
+                            <label class="block text-base font-medium text-gray-600 mb-1.5">Nombre *</label>
                             <input v-model="form.name" type="text" required
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             <p v-if="form.errors.name" class="text-xs text-red-500 mt-1">{{ form.errors.name }}</p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Email *</label>
                                 <input v-model="form.email" type="email" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                                 <p v-if="form.errors.email" class="text-xs text-red-500 mt-1">{{ form.errors.email }}</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Rol *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Rol *</label>
                                 <select v-model="form.role"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
                                     <option value="worker">Trabajador</option>
                                     <option value="admin">Admin</option>
                                 </select>
@@ -208,29 +209,29 @@ function deleteUser(id) {
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">
                                     {{ editingUser ? 'Nueva contraseña' : 'Contraseña *' }}
                                 </label>
                                 <input v-model="form.password" type="password"
                                     :placeholder="editingUser ? 'Dejar vacío para no cambiar' : ''"
                                     :required="!editingUser"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Confirmar contraseña</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Confirmar contraseña</label>
                                 <input type="password"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Teléfono</label>
                                 <input v-model="form.phone" type="text" placeholder="+34 600 000 000"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Color</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Color</label>
                                 <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2">
                                     <input v-model="form.color" type="color" class="w-6 h-6 rounded border-0 p-0 bg-transparent cursor-pointer" />
                                     <span class="text-sm text-gray-600 font-mono text-xs">{{ form.color }}</span>
@@ -240,14 +241,14 @@ function deleteUser(id) {
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Fecha de contratación</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha de contratación</label>
                                 <input v-model="form.hire_date" type="date"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Días de vacaciones / Año</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Días de vacaciones / Año</label>
                                 <input v-model="form.vacation_days" type="number" min="0"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                         </div>
 
@@ -258,11 +259,11 @@ function deleteUser(id) {
                         </div>
 
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" @click="showModal = false" class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <button type="button" @click="showModal = false" class="px-4 py-2.5 text-base text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
                                 Cancelar
                             </button>
                             <button type="submit" :disabled="form.processing"
-                                class="px-5 py-2 text-sm text-white rounded-lg font-medium disabled:opacity-60"
+                                class="px-5 py-2.5 text-base text-white rounded-lg font-medium disabled:opacity-60"
                                 :style="{ backgroundColor: tenant?.primary_color || '#8b5cf6' }">
                                 {{ form.processing ? 'Guardando...' : 'Guardar cambios' }}
                             </button>
@@ -270,6 +271,27 @@ function deleteUser(id) {
                     </form>
                 </div>
             </div>
+            </Transition>
         </Teleport>
     </AppLayout>
 </template>
+
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.25s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+}
+</style>

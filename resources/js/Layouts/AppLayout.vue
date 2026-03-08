@@ -59,7 +59,7 @@ function isActive(routeName) {
         <button
             @click="toggleSidebar"
             class="absolute top-[30px] z-50 -translate-y-1/2 w-6 h-6 bg-white border border-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-[left] duration-300 ease-in-out"
-            :class="collapsed ? 'left-[52px]' : 'left-[208px]'"
+            :class="collapsed ? 'left-[52px]' : 'left-[228px]'"
             :title="collapsed ? 'Expandir menú' : 'Colapsar menú'"
         >
             <!-- << collapse -->
@@ -75,11 +75,11 @@ function isActive(routeName) {
         <!-- ── Sidebar ── -->
         <aside
             class="bg-white flex flex-col flex-shrink-0 border-r border-gray-100 transition-[width] duration-300 ease-in-out overflow-hidden"
-            :class="collapsed ? 'w-[64px]' : 'w-[220px]'"
+            :class="collapsed ? 'w-[64px]' : 'w-60'"
         >
             <!-- Header: logo + name -->
             <div
-                class="flex items-center h-[60px] border-b border-gray-100 flex-shrink-0 px-3 gap-2"
+                class="flex items-center h-[60px] border-b border-gray-100 flex-shrink-0 px-4 gap-3"
             >
                 <!-- Tenant avatar -->
                 <div
@@ -97,15 +97,15 @@ function isActive(routeName) {
                     class="min-w-0 flex-1 overflow-hidden transition-[opacity] duration-200"
                     :class="collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'"
                 >
-                    <p class="text-gray-900 text-sm font-semibold leading-none truncate whitespace-nowrap">
+                    <p class="text-gray-900 text-base font-semibold leading-none truncate whitespace-nowrap">
                         {{ tenant?.name ?? 'Salón' }}
                     </p>
-                    <p class="text-gray-400 text-[11px] mt-0.5 whitespace-nowrap">Panel de gestión</p>
+                    <p class="text-gray-400 text-xs mt-0.5 whitespace-nowrap">Panel de gestión</p>
                 </div>
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 py-3 overflow-y-auto overflow-x-hidden">
+            <nav class="flex-1 py-4 overflow-y-auto overflow-x-hidden">
                 <div
                     v-for="(section, index) in navSections"
                     :key="section.label"
@@ -114,7 +114,7 @@ function isActive(routeName) {
                     <!-- Section label (hidden when collapsed) -->
                     <p
                         v-if="!collapsed"
-                        class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-4 mb-1 whitespace-nowrap"
+                        class="px-5 mt-1 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest"
                     >
                         {{ section.label }}
                     </p>
@@ -125,13 +125,13 @@ function isActive(routeName) {
                     />
 
                     <!-- Nav items -->
-                    <div class="space-y-0.5 px-2">
+                    <div class="space-y-0.5 px-3">
                         <Link
                             v-for="item in section.items"
                             :key="item.name"
                             :href="route(item.route)"
                             :title="collapsed ? item.name : ''"
-                            class="group relative w-full flex items-center rounded-lg py-2 px-2 transition-colors duration-150"
+                            class="group relative w-full flex items-center rounded-lg py-2.5 px-3 transition-colors duration-150"
                             :class="[
                                 collapsed ? 'justify-center' : 'gap-2.5',
                                 isActive(item.route)
@@ -165,7 +165,7 @@ function isActive(routeName) {
                             </svg>
 
                             <!-- Item label -->
-                            <span v-if="!collapsed" class="text-sm font-medium truncate">
+                            <span v-if="!collapsed" class="text-base font-medium truncate">
                                 {{ item.name }}
                             </span>
 
@@ -175,9 +175,9 @@ function isActive(routeName) {
                                 :class="
                                     isActive(item.route)
                                         ? 'h-5 opacity-100'
-                                        : 'h-0 opacity-0 group-hover:h-4 group-hover:opacity-100'
+                                        : 'h-0 opacity-0 group-hover:h-5 group-hover:opacity-80'
                                 "
-                                :style="{ backgroundColor: primaryColor }"
+                                :style="{ backgroundColor: isActive(item.route) ? primaryColor : '#9ca3af' }"
                             />
                         </Link>
                     </div>
@@ -185,7 +185,7 @@ function isActive(routeName) {
             </nav>
 
             <!-- User footer -->
-            <div class="border-t border-gray-100 px-3 py-3 flex-shrink-0">
+            <div class="border-t border-gray-100 px-4 py-4 flex-shrink-0">
                 <div
                     class="flex items-center gap-2"
                     :class="collapsed ? 'justify-center' : ''"
@@ -203,8 +203,8 @@ function isActive(routeName) {
                         v-if="!collapsed"
                         class="flex-1 min-w-0"
                     >
-                        <p class="text-gray-900 text-xs font-medium truncate">{{ user?.name }}</p>
-                        <p class="text-gray-400 text-[11px] truncate capitalize">{{ user?.role ?? 'Admin' }}</p>
+                        <p class="text-gray-900 text-sm font-medium truncate">{{ user?.name }}</p>
+                        <p class="text-gray-400 text-xs truncate capitalize">{{ user?.role ?? 'Admin' }}</p>
                     </div>
 
                     <!-- Logout button (hidden when collapsed) -->
@@ -237,13 +237,13 @@ function isActive(routeName) {
                         <input
                             type="text"
                             placeholder="Buscar..."
-                            class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 bg-gray-50"
+                            class="w-full pl-9 pr-4 py-2 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 bg-gray-50"
                         />
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-400">
+                    <span class="text-sm text-gray-400">
                         {{ new Date().toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }) }}
                     </span>
                     <button class="text-gray-400 hover:text-gray-600 transition-colors">

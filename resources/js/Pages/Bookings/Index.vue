@@ -105,7 +105,7 @@ const statusColors = {
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">Reservas</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Reservas</h1>
                     <p class="text-sm text-gray-400 mt-0.5">Gestiona las citas de la peluquería</p>
                 </div>
                 <div class="flex gap-2">
@@ -127,18 +127,18 @@ const statusColors = {
                 <input
                     v-model="filterDate"
                     type="date"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
                 />
                 <select
                     v-model="filterWorker"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
                 >
                     <option value="">Todos los trabajadores</option>
                     <option v-for="w in workers" :key="w.id" :value="w.id">{{ w.name }}</option>
                 </select>
                 <select
                     v-model="filterStatus"
-                    class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    class="border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"
                 >
                     <option value="">Todos los estados</option>
                     <option value="pending">Pendiente</option>
@@ -224,10 +224,11 @@ const statusColors = {
 
         <!-- Modal -->
         <Teleport to="body">
-            <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-screen overflow-y-auto">
+            <Transition name="modal">
+            <div v-if="showModal" class="fixed inset-0 bg-black/25 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="modal-panel bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
                     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                        <h2 class="text-base font-semibold text-gray-800">
+                        <h2 class="text-2xl font-bold text-gray-800">
                             {{ editingBooking ? 'Editar reserva' : 'Nueva reserva' }}
                         </h2>
                         <button @click="showModal = false" class="text-gray-400 hover:text-gray-600">
@@ -239,48 +240,48 @@ const statusColors = {
                     <form @submit.prevent="submitForm" class="p-6 space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombre del cliente *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Nombre del cliente *</label>
                                 <input v-model="form.client_name" type="text" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                                 <p v-if="form.errors.client_name" class="text-xs text-red-500 mt-1">{{ form.errors.client_name }}</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Teléfono</label>
                                 <input v-model="form.client_phone" type="text"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Fecha *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha *</label>
                                 <input v-model="form.date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Hora inicio *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Hora inicio *</label>
                                 <input v-model="form.time_start" type="time" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Hora fin *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Hora fin *</label>
                                 <input v-model="form.time_end" type="time" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Trabajador</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Trabajador</label>
                                 <select v-model="form.worker_id"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
                                     <option value="">Sin asignar</option>
                                     <option v-for="w in workers" :key="w.id" :value="w.id">{{ w.name }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Servicio</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Servicio</label>
                                 <input v-model="form.service" type="text"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Estado</label>
                                 <select v-model="form.status"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500">
                                     <option value="pending">Pendiente</option>
                                     <option value="confirmed">Confirmada</option>
                                     <option value="cancelled">Cancelada</option>
@@ -288,17 +289,17 @@ const statusColors = {
                                 </select>
                             </div>
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Notas</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Notas</label>
                                 <textarea v-model="form.notes" rows="2"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
                             </div>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" @click="showModal = false" class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <button type="button" @click="showModal = false" class="px-4 py-2.5 text-base text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
                                 Cancelar
                             </button>
                             <button type="submit" :disabled="form.processing"
-                                class="px-5 py-2 text-sm text-white rounded-lg font-medium disabled:opacity-60"
+                                class="px-5 py-2.5 text-base text-white rounded-lg font-medium disabled:opacity-60"
                                 :style="{ backgroundColor: tenant?.primary_color || '#8b5cf6' }">
                                 {{ form.processing ? 'Guardando...' : (editingBooking ? 'Guardar cambios' : 'Crear reserva') }}
                             </button>
@@ -306,6 +307,27 @@ const statusColors = {
                     </form>
                 </div>
             </div>
+            </Transition>
         </Teleport>
     </AppLayout>
 </template>
+
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.25s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+}
+</style>

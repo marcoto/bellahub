@@ -58,7 +58,7 @@ const usedPercent = computed(() => Math.min(100, (props.usedDays / props.totalDa
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">Vacaciones</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Vacaciones</h1>
                     <p class="text-sm text-gray-400 mt-0.5">Gestiona las solicitudes de días libres</p>
                 </div>
                 <button
@@ -167,10 +167,11 @@ const usedPercent = computed(() => Math.min(100, (props.usedDays / props.totalDa
 
         <!-- Request Modal -->
         <Teleport to="body">
-            <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <Transition name="modal">
+            <div v-if="showModal" class="fixed inset-0 bg-black/25 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="modal-panel bg-white rounded-xl shadow-xl w-full max-w-xl">
                     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                        <h2 class="text-base font-semibold text-gray-800">Solicitar vacaciones</h2>
+                        <h2 class="text-2xl font-bold text-gray-800">Solicitar vacaciones</h2>
                         <button @click="showModal = false" class="text-gray-400 hover:text-gray-600">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -180,29 +181,29 @@ const usedPercent = computed(() => Math.min(100, (props.usedDays / props.totalDa
                     <form @submit.prevent="submit" class="p-6 space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Fecha inicio *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha inicio *</label>
                                 <input v-model="form.from_date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                                 <p v-if="form.errors.from_date" class="text-xs text-red-500 mt-1">{{ form.errors.from_date }}</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Fecha fin *</label>
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Fecha fin *</label>
                                 <input v-model="form.to_date" type="date" required
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                                 <p v-if="form.errors.to_date" class="text-xs text-red-500 mt-1">{{ form.errors.to_date }}</p>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Notas</label>
+                            <label class="block text-base font-medium text-gray-600 mb-1.5">Notas</label>
                             <textarea v-model="form.notes" rows="3" placeholder="Motivo o comentarios opcionales..."
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" @click="showModal = false" class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <button type="button" @click="showModal = false" class="px-4 py-2.5 text-base text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50">
                                 Cancelar
                             </button>
                             <button type="submit" :disabled="form.processing"
-                                class="px-5 py-2 text-sm text-white rounded-lg font-medium disabled:opacity-60"
+                                class="px-5 py-2.5 text-base text-white rounded-lg font-medium disabled:opacity-60"
                                 :style="{ backgroundColor: tenant?.primary_color || '#8b5cf6' }">
                                 {{ form.processing ? 'Enviando...' : 'Enviar solicitud' }}
                             </button>
@@ -210,6 +211,27 @@ const usedPercent = computed(() => Math.min(100, (props.usedDays / props.totalDa
                     </form>
                 </div>
             </div>
+            </Transition>
         </Teleport>
     </AppLayout>
 </template>
+
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.25s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+}
+</style>
