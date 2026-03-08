@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Booking extends Model
 {
@@ -14,7 +15,6 @@ class Booking extends Model
         'time_start',
         'time_end',
         'worker_id',
-        'service',
         'status',
         'notes',
     ];
@@ -26,6 +26,11 @@ class Booking extends Model
     public function worker(): BelongsTo
     {
         return $this->belongsTo(User::class, 'worker_id');
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'booking_service');
     }
 
     public function getStatusLabelAttribute(): string

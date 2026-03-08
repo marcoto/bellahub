@@ -3,6 +3,7 @@ import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Select from 'primevue/select'
+import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
 
 const page = usePage()
@@ -11,6 +12,7 @@ const tenant = computed(() => page.props.tenant)
 const props = defineProps({
     bookings: Object,
     workers: Array,
+    serviceCategories: Array,
     filters: Object,
 })
 
@@ -53,7 +55,7 @@ const form = useForm({
     time_start:   '09:00',
     time_end:     '10:00',
     worker_id:    '',
-    service:      '',
+    service_ids:  [],
     status:       'confirmed',
     notes:        '',
 })
@@ -77,6 +79,7 @@ function openCreate() {
     form.time_start = '09:00'
     form.time_end = '10:00'
     form.status = 'confirmed'
+    form.service_ids = []
     showModal.value = true
 }
 
@@ -88,7 +91,7 @@ function openEdit(booking) {
     form.time_start   = booking.time_start
     form.time_end     = booking.time_end
     form.worker_id    = booking.worker?.id ?? ''
-    form.service      = booking.service ?? ''
+    form.service_ids  = booking.services.map(s => s.id)
     form.status       = booking.status
     form.notes        = booking.notes ?? ''
     showModal.value = true
@@ -190,7 +193,7 @@ const statusColors = {
                             <th class="px-5 py-3 text-left font-medium">Cliente</th>
                             <th class="px-5 py-3 text-left font-medium">Fecha / Hora</th>
                             <th class="px-5 py-3 text-left font-medium">Trabajador</th>
-                            <th class="px-5 py-3 text-left font-medium">Servicio</th>
+                            <th class="px-5 py-3 text-left font-medium">Servicios</th>
                             <th class="px-5 py-3 text-left font-medium">Estado</th>
                             <th class="px-5 py-3 text-left font-medium">Acciones</th>
                         </tr>
@@ -212,7 +215,18 @@ const statusColors = {
                                 </div>
                                 <span v-else class="text-sm text-gray-400">—</span>
                             </td>
-                            <td class="px-5 py-3.5 text-sm text-gray-500">{{ booking.service || '—' }}</td>
+                            <td class="px-5 py-3.5">
+                                <div v-if="booking.services?.length" class="flex flex-wrap gap-1">
+                                    <span
+                                        v-for="s in booking.services"
+                                        :key="s.id"
+                                        class="px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700"
+                                    >
+                                        {{ s.name }}
+                                    </span>
+                                </div>
+                                <span v-else class="text-sm text-gray-400">—</span>
+                            </td>
                             <td class="px-5 py-3.5">
                                 <span :class="['px-2.5 py-1 rounded-full text-xs font-medium', statusColors[booking.status] || 'bg-gray-100 text-gray-500']">
                                     {{ booking.status_label }}
@@ -296,6 +310,23 @@ const statusColors = {
                                 <input v-model="form.time_end" type="time" required
                                     class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
                             </div>
+                             <div class="col-span-2">
+                                <label class="block text-base font-medium text-gray-600 mb-1.5">Servicios</label>
+                                <MultiSelect
+                                    v-model="form.service_ids"
+                                    :options="serviceCategories"
+                                    optionLabel="name"
+                                    optionValue="id"
+                                    optionGroupLabel="label"
+                                    optionGroupChildren="items"
+                                    filter
+                                    filterPlaceholder="Buscar servicio..."
+                                    placeholder="Seleccionar servicios"
+                                    display="chip"
+                                    class="w-full"
+                                />
+                                <p v-if="form.errors.service_ids" class="text-xs text-red-500 mt-1">{{ form.errors.service_ids }}</p>
+                            </div>
                             <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Trabajador</label>
                                 <Select
@@ -309,11 +340,6 @@ const statusColors = {
                                 />
                             </div>
                             <div>
-                                <label class="block text-base font-medium text-gray-600 mb-1.5">Servicio</label>
-                                <input v-model="form.service" type="text"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-violet-500" />
-                            </div>
-                            <div>
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Estado</label>
                                 <Select
                                     v-model="form.status"
@@ -323,6 +349,7 @@ const statusColors = {
                                     class="w-full"
                                 />
                             </div>
+                           
                             <div class="col-span-2">
                                 <label class="block text-base font-medium text-gray-600 mb-1.5">Notas</label>
                                 <textarea v-model="form.notes" rows="2"
