@@ -53,14 +53,31 @@ function isActive(routeName) {
 </script>
 
 <template>
-    <div class="flex h-screen bg-gray-50 overflow-hidden">
+    <div class="relative flex h-screen bg-gray-50 overflow-hidden">
+
+        <!-- ── Floating toggle button (sits on the sidebar/topbar border line) ── -->
+        <button
+            @click="toggleSidebar"
+            class="absolute top-[30px] z-50 -translate-y-1/2 w-6 h-6 bg-white border border-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-[left] duration-300 ease-in-out"
+            :class="collapsed ? 'left-[52px]' : 'left-[208px]'"
+            :title="collapsed ? 'Expandir menú' : 'Colapsar menú'"
+        >
+            <!-- << collapse -->
+            <svg v-if="!collapsed" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <!-- > expand -->
+            <svg v-else class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
 
         <!-- ── Sidebar ── -->
         <aside
             class="bg-white flex flex-col flex-shrink-0 border-r border-gray-100 transition-[width] duration-300 ease-in-out overflow-hidden"
             :class="collapsed ? 'w-[64px]' : 'w-[220px]'"
         >
-            <!-- Header: logo + collapse toggle -->
+            <!-- Header: logo + name -->
             <div
                 class="flex items-center h-[60px] border-b border-gray-100 flex-shrink-0 px-3 gap-2"
             >
@@ -85,22 +102,6 @@ function isActive(routeName) {
                     </p>
                     <p class="text-gray-400 text-[11px] mt-0.5 whitespace-nowrap">Panel de gestión</p>
                 </div>
-
-                <!-- Collapse / expand button -->
-                <button
-                    @click="toggleSidebar"
-                    class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-                    :title="collapsed ? 'Expandir menú' : 'Colapsar menú'"
-                >
-                    <!-- << collapse -->
-                    <svg v-if="!collapsed" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/>
-                    </svg>
-                    <!-- >> expand -->
-                    <svg v-else class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M6 5l7 7-7 7"/>
-                    </svg>
-                </button>
             </div>
 
             <!-- Navigation -->
